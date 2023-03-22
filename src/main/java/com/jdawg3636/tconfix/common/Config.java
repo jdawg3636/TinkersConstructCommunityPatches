@@ -1,4 +1,4 @@
-package com.myname.mymodid;
+package com.jdawg3636.tconfix.common;
 
 import java.io.File;
 

@@ -1,4 +1,4 @@
-package com.myname.mymodid;
+package com.jdawg3636.tconfix.common;
 
 public class ClientProxy extends CommonProxy {
 
