@@ -549,6 +549,14 @@ repositories {
             url "https://maven.mcmoddev.com/"
         }
     }
+    maven {
+        name 'covers1624 Maven (Modern Replacement for ChickenBones Maven)'
+        url "https://maven.covers1624.net/"
+    }
+    maven {
+        name 'DVS1 Maven FS'
+        url 'https://dvs1.progwml6.com/files/maven'
+    }
 }
 
 def mixinProviderGroup = "io.github.legacymoddingmc"

@@ -1,11 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8.5-GTNH",
-  "package": "com.jdawg3636.tconfix.mixins",
+  "package": "com.jdawg3636.tconfix.late",
   "refmap": "mixins.tconfix.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
+  "mixins": [
+    "RapierMixin"
+  ],
   "client": [],
   "server": []
 }

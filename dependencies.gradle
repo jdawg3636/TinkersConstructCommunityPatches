@@ -29,6 +29,14 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    compile(deobfCurse("mantle-74924:2264244"))
-    compile(deobfCurse("tinkers-construct-74072:2264246"))
+//    compile "codechicken:CodeChickenLib:1.7.10-1.1.3.136:dev"
+//    compile "codechicken:CodeChickenCore:1.7.10-1.0.6.43:dev"
+//    compile "codechicken:NotEnoughItems:1.7.10-1.0.4.106:dev"
+//    compile "codechicken:ForgeMultipart:1.7.10-1.1.2.334:dev"
+    compileOnly(deobf("https://github.com/Mine-and-blade-admin/Battlegear2/raw/1.7.10/battlegear%20api/1.7.10-Battlegear-Bin-1.0.8.2.jar"))
+    compileOnly(deobfCurse("dynamic-sword-skills-226360:2495462"))
+    compileOnly(deobfCurse("zelda-sword-skills-220540:2384889"))
+    compileOnly(deobfCurse("cofh-core-69162:2388751"))
+    api(deobfCurse("mantle-74924:2264244"))
+    api(deobfCurse("tinkers-construct-74072:2264246"))
 }
