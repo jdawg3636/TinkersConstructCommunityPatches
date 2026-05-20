@@ -1,6 +1,5 @@
-package com.jdawg3636.tconfix.late;
+package com.jdawg3636.tconfix.mixins;
 
-import com.gtnewhorizon.gtnhmixins.LateMixin;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.resources.I18n;
