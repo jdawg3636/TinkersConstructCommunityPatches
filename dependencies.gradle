@@ -42,6 +42,7 @@ dependencies {
     compileOnly(deobfCurse("dynamic-sword-skills-226360:2495462"))
     compileOnly(deobfCurse("zelda-sword-skills-220540:2384889"))
     compileOnly(deobfCurse("cofh-core-69162:2388751"))
-    api(deobfCurse("mantle-74924:2264244"))
-    api(deobfCurse("tinkers-construct-74072:2264246"))
+    implementation(deobfCurse("mantle-74924:2264244"))
+    implementation(deobfCurse("tinkers-construct-74072:2264246"))
+    implementation(deobfCurse("galacticraft-legacy-564236:4501439"))
 }
