@@ -1,4 +1,4 @@
-package com.jdawg3636.competitivetweaks.mixins;
+package com.jdawg3636.competitivetweaks.latemixins;
 
 import com.jdawg3636.competitivetweaks.common.CompetitiveTweaksConfig;
 import cpw.mods.fml.relauncher.Side;
