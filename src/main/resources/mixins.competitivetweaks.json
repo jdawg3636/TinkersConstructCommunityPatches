@@ -1,11 +1,12 @@
 {
   "required": true,
   "minVersion": "0.8.5-GTNH",
-  "package": "com.jdawg3636.tconfix.mixins",
-  "refmap": "mixins.tconfix.refmap.json",
+  "package": "com.jdawg3636.competitivetweaks.mixins",
+  "refmap": "mixins.competitivetweaks.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "GalacticraftMeteorMixin",
     "RapierMixin"
   ],
   "client": [],

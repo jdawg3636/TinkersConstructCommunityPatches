@@ -6,7 +6,7 @@
 		"description": "Various tweaks and patches for other mods to improve viability for competitive/war modpacks, including Galacticraft and Tinkers' Construct.",
 		"version": "${modVersion}",
 		"mcversion": "${minecraftVersion}",
-		"url": "http://tconfix.jdawg3636.com",
+		"url": "http://competitivetweaks.jdawg3636.com",
 		"updateUrl": "",
 		"authorList": ["jdawg3636"],
 		"credits": "",
