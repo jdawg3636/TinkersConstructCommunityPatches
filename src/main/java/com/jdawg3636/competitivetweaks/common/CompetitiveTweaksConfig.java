@@ -8,6 +8,7 @@ public class CompetitiveTweaksConfig {
 
     public static Configuration config;
 
+    public static boolean requireModToBeInstalledOnClient = false;
     public static boolean disableRapierPiercing = true;
     public static boolean limitMeteorSpawnRadius = true;
     public static int meteorSpawnRadius = 1000;
@@ -19,6 +20,13 @@ public class CompetitiveTweaksConfig {
 
     public static void load() {
         config.load();
+
+        requireModToBeInstalledOnClient = config.getBoolean(
+            "requireModToBeInstalledOnClient",
+            "_general",
+            false,
+            "If true, the server will refuse to allow clients to join if they don't also have this mod installed."
+        );
 
         disableRapierPiercing = config.getBoolean(
             "disableRapierPiercing",
