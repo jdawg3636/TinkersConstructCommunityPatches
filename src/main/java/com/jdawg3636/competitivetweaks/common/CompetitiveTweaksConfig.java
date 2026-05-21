@@ -8,10 +8,18 @@ public class CompetitiveTweaksConfig {
 
     public static Configuration config;
 
+    // _general
     public static boolean requireModToBeInstalledOnClient = false;
+    // tinkers_construct
     public static boolean disableRapierPiercing = true;
     public static boolean limitMeteorSpawnRadius = true;
+    // galacticraft
     public static int meteorSpawnRadius = 1000;
+    // vanilla
+    public static boolean silkTouchSpawners = true;
+    public static boolean setSpawnerEntityUsingSpawnEgg = true;
+    public static boolean setSpawnerEntityUsingSpawnEggInSurvival = false;
+    public static boolean setSpawnerEntityUsingSpawnEggInSurvivalConsumesEgg = true;
 
     public static void init(File configFile) {
         config = new Configuration(configFile);
@@ -56,6 +64,36 @@ public class CompetitiveTweaksConfig {
                 "meaning that they can still land outside of this radius if the player is standing within the radius close to " +
                 "the border. If you wish to completely disable meteor spawns, the best solution is to set \"Meteor Spawn Modifier\" " +
                 "to 0.0 in the normal Galacticraft config."
+        );
+
+        silkTouchSpawners = config.getBoolean(
+            "silkTouchSpawners",
+            "vanilla",
+            true,
+            "If true, mob spawners can be collected using Silk Touch. This is compatible with modded tools, such " +
+                "as Tinkers' Construct pickaxes with the 'Silky' modifier (Silk Jewel) applied."
+        );
+
+        setSpawnerEntityUsingSpawnEgg = config.getBoolean(
+            "setSpawnerEntityUsingSpawnEgg",
+            "vanilla",
+            true,
+            "If true, right-clicking on a mob spawner while holding a spawn egg will change the entityId of the spawner " +
+                "to that of the spawn egg. By default, this is only enabled in Creative Mode."
+        );
+
+        setSpawnerEntityUsingSpawnEggInSurvival = config.getBoolean(
+            "setSpawnerEntityUsingSpawnEggInSurvival",
+            "vanilla",
+            false,
+            "If true, the functionality enabled by setSpawnerEntityUsingSpawnEgg will apply outside of Creative Mode."
+        );
+
+        setSpawnerEntityUsingSpawnEggInSurvivalConsumesEgg = config.getBoolean(
+            "setSpawnerEntityUsingSpawnEggInSurvivalConsumesEgg",
+            "vanilla",
+            true,
+            "If true, the functionality enabled by setSpawnerEntityUsingSpawnEggInSurvival will consume the spawn egg when not in Creative Mode."
         );
 
         if (config.hasChanged()) {

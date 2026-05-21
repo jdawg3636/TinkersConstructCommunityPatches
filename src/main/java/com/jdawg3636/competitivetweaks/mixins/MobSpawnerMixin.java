@@ -1,5 +1,6 @@
 package com.jdawg3636.competitivetweaks.mixins;
 
+import com.jdawg3636.competitivetweaks.common.CompetitiveTweaksConfig;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -17,6 +18,9 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Random;
 
@@ -32,14 +36,14 @@ public class MobSpawnerMixin extends Block {
         if (spawner != null) {
             NBTTagCompound tag = new NBTTagCompound();
             spawner.func_145881_a().writeToNBT(tag);
-            tag.removeTag("Delay"); // Don't store delay - prevents items from stacking in inventory
+            tag.setShort("Delay", tag.getShort("MinSpawnDelay")); // Don't store delay - prevents items from stacking in inventory
             stack.setTagCompound(tag);
         }
     }
 
     @Override
     public boolean canSilkHarvest(World world, EntityPlayer player, int x, int y, int z, int metadata) {
-        return true;
+        return CompetitiveTweaksConfig.silkTouchSpawners;
     }
 
     @Override
@@ -54,9 +58,11 @@ public class MobSpawnerMixin extends Block {
         }
     }
 
-    @Overwrite
-    public Item getItemDropped(int meta, Random random, int fortune) {
-        return Item.getItemFromBlock(this);
+    @Inject(method = "getItemDropped", at = @At("HEAD"), cancellable = true)
+    public void mixin$competitiveTweaks$onGetItemDropped(int meta, Random random, int fortune, CallbackInfoReturnable<Item> callback) {
+        if(CompetitiveTweaksConfig.silkTouchSpawners) {
+            callback.setReturnValue(Item.getItemFromBlock(this));
+        }
     }
 
     @Override
@@ -92,6 +98,7 @@ public class MobSpawnerMixin extends Block {
     }
 
     @Override
+    // Not annotated with @SideOnly, but as far as I can tell this is only called on the physical client.
     public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
         ItemStack stack = super.getPickBlock(target, world, x, y, z);
         this.mixin$competitiveTweaks$addTagToMobSpawnerItemStack(stack, world, x, y, z);
@@ -100,24 +107,42 @@ public class MobSpawnerMixin extends Block {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float subX, float subY, float subZ) {
-        if(!player.capabilities.isCreativeMode) {
+        // If disabled in config, return false (matches super)
+        if(!CompetitiveTweaksConfig.setSpawnerEntityUsingSpawnEgg) {
             return false;
         }
+        // If not in Creative Mode and disabled in config for non-Creative, return false (matches super)
+        if(!(player.capabilities.isCreativeMode || CompetitiveTweaksConfig.setSpawnerEntityUsingSpawnEggInSurvival)) {
+            return false;
+        }
+        // Check if holding spawn egg
         ItemStack heldStack = player.getHeldItem();
         if(heldStack.getItem() instanceof ItemMonsterPlacer) {
+            // Only run on logical server
             if(!world.isRemote) {
+                // Get TileEntity
                 TileEntityMobSpawner spawner = (TileEntityMobSpawner) world.getTileEntity(x, y, z);
                 if (spawner != null) {
+                    // Get Spawn Egg Info
                     EntityList.EntityEggInfo eggInfo = (EntityList.EntityEggInfo) EntityList.entityEggs.get(heldStack.getItemDamage());
                     if(eggInfo != null) {
+                        // Set spawner entityId to match spawn egg
                         String entityId = EntityList.getStringFromID(eggInfo.spawnedID);
                         spawner.func_145881_a().setEntityName(entityId);
                         world.markBlockForUpdate(x, y, z);
+                        // Depending on config, consume spawn egg if not in Creative Mode
+                        if(!player.capabilities.isCreativeMode && CompetitiveTweaksConfig.setSpawnerEntityUsingSpawnEggInSurvivalConsumesEgg) {
+                            heldStack.stackSize -= 1;
+                            if(heldStack.stackSize <= 0) {
+                                player.destroyCurrentEquippedItem();
+                            }
+                        }
                     }
                 }
             }
             return true;
         }
+        // If not holding spawn egg, return false (matches super)
         return false;
     }
 
