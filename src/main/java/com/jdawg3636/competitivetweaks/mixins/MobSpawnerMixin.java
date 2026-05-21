@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Map;
 import java.util.Random;
 
 @Mixin(BlockMobSpawner.class)
@@ -34,10 +35,16 @@ public class MobSpawnerMixin extends Block {
     private void mixin$competitiveTweaks$addTagToMobSpawnerItemStack(ItemStack stack, World world, int x, int y, int z) {
         TileEntityMobSpawner spawner = (TileEntityMobSpawner) world.getTileEntity(x, y, z);
         if (spawner != null) {
+            // Set NBT
             NBTTagCompound tag = new NBTTagCompound();
             spawner.func_145881_a().writeToNBT(tag);
             tag.setShort("Delay", tag.getShort("MinSpawnDelay")); // Don't store delay - prevents items from stacking in inventory
             stack.setTagCompound(tag);
+            // NEI Compatibility: set damage/metadata to the numeric entity ID
+            Map<String, Integer> stringToIDMapping = EntityListMixin.getStringToIDMapping();
+            if(stringToIDMapping != null) {
+                stack.setItemDamage(stringToIDMapping.get(tag.getString("EntityId")));
+            }
         }
     }
 
@@ -52,8 +59,19 @@ public class MobSpawnerMixin extends Block {
         if(!world.isRemote) {
             TileEntityMobSpawner spawner = (TileEntityMobSpawner) world.getTileEntity(x, y, z);
             NBTTagCompound stackTag = stack.getTagCompound();
-            if (spawner != null && stackTag != null) {
-                spawner.func_145881_a().readFromNBT(stackTag);
+            if (spawner != null) {
+                // NEI Compatibility: If tag unavailable, fall back on damage/metadata value.
+                if(stackTag == null) {
+                    String entityIdFromMeta = EntityList.getStringFromID(stack.getItemDamage());
+                    if(entityIdFromMeta != null) {
+                        stackTag = new NBTTagCompound();
+                        stackTag.setString("EntityId", entityIdFromMeta);
+                        stackTag.setShort("Delay", (short)200);
+                    }
+                }
+                if(stackTag != null) {
+                    spawner.func_145881_a().readFromNBT(stackTag);
+                }
             }
         }
     }

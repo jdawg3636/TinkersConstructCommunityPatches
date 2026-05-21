@@ -45,4 +45,6 @@ dependencies {
     implementation(deobfCurse("mantle-74924:2264244"))
     implementation(deobfCurse("tinkers-construct-74072:2264246"))
     implementation(deobfCurse("galacticraft-legacy-564236:4501439"))
+    devOnlyNonPublishable(deobfCurse("codechickencore-unofficial-746279:7739565"))
+    devOnlyNonPublishable(deobfCurse("notenoughitems-222211:2302312"))
 }
