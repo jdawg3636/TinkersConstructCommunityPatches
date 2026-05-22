@@ -52,10 +52,20 @@ public class MobSpawnerMixin extends Block {
             }
             // Set Display Name
             if(entityIdFromNBT != null) {
-                String formattedEntityName = entityIdFromNBT;
-                if(StatCollector.canTranslate(formattedEntityName)) {
-                    formattedEntityName = StatCollector.translateToLocal("entity." + entityIdFromNBT + ".name");
+                final String[] entityNameSegments = entityIdFromNBT.split("\\.");
+                final String entityNameLastSegment = entityNameSegments[entityNameSegments.length - 1];
+                StringBuilder formattedEntityNameBuilder = new StringBuilder();
+                for(int i = 0; i < entityNameLastSegment.length(); ++i) {
+                    char currentChar = entityNameLastSegment.charAt(i);
+                    if(i > 0) {
+                        char previousChar = entityNameLastSegment.charAt(i - 1);
+                        if(Character.isUpperCase(currentChar) && !Character.isUpperCase(previousChar)) {
+                            formattedEntityNameBuilder.append(' ');
+                        }
+                    }
+                    formattedEntityNameBuilder.append(currentChar);
                 }
+                String formattedEntityName = formattedEntityNameBuilder.toString();
                 if(!formattedEntityName.isEmpty()) {
                     stack.setStackDisplayName(EnumChatFormatting.RESET + stack.getDisplayName() + " (" + formattedEntityName + ")");
                 }
