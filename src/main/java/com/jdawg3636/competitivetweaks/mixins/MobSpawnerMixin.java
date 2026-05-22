@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockMobSpawner;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,7 +15,9 @@ import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityMobSpawner;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -22,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
 import java.util.Random;
 
 @Mixin(BlockMobSpawner.class)
@@ -40,10 +42,23 @@ public class MobSpawnerMixin extends Block {
             spawner.func_145881_a().writeToNBT(tag);
             tag.setShort("Delay", tag.getShort("MinSpawnDelay")); // Don't store delay - prevents items from stacking in inventory
             stack.setTagCompound(tag);
+            // Grab name for later steps
+            String entityIdFromNBT = tag.getString("EntityId");
             // NEI Compatibility: set damage/metadata to the numeric entity ID
-            Map<String, Integer> stringToIDMapping = EntityListMixin.getStringToIDMapping();
-            if(stringToIDMapping != null) {
-                stack.setItemDamage(stringToIDMapping.get(tag.getString("EntityId")));
+            Class<Entity> entityClass = (Class<Entity>) EntityList.stringToClassMapping.get(entityIdFromNBT);
+            if(entityClass != null) {
+                int entityId = EntityListMixin.getClassToIDMapping().getOrDefault(entityClass, 0);
+                stack.setItemDamage(entityId);
+            }
+            // Set Display Name
+            if(entityIdFromNBT != null) {
+                String formattedEntityName = entityIdFromNBT;
+                if(StatCollector.canTranslate(formattedEntityName)) {
+                    formattedEntityName = StatCollector.translateToLocal("entity." + entityIdFromNBT + ".name");
+                }
+                if(!formattedEntityName.isEmpty()) {
+                    stack.setStackDisplayName(EnumChatFormatting.RESET + stack.getDisplayName() + " (" + formattedEntityName + ")");
+                }
             }
         }
     }
